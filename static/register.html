@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký — Trợ lý Số Cán bộ Xã</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2563eb; --bg: #f3f4f6; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+        h1 { font-family: 'Lexend'; font-size: 24px; color: #1e3a8a; margin-bottom: 24px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; }
+        .form-group { margin-bottom: 16px; }
+        .full-width { grid-column: span 2; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #374151; }
+        input, select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .footer { margin-top: 20px; font-size: 14px; color: #6b7280; }
+        .footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Tạo tài khoản Cán bộ</h1>
+        <form id="reg-form">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Họ và tên</label>
+                    <input type="text" id="full_name" required placeholder="Nguyễn Văn A">
+                </div>
+                <div class="form-group">
+                    <label>Tên đăng nhập</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Tuổi</label>
+                    <input type="number" id="age" required>
+                </div>
+                <div class="form-group">
+                    <label>Phòng ban / Bộ phận</label>
+                    <select id="department" required>
+                        <option value="ke_toan">Kế toán - Tài chính</option>
+                        <option value="tu_phap">Tư pháp - Hộ tịch</option>
+                        <option value="dia_chinh">Địa chính - Xây dựng</option>
+                        <option value="van_hoa">Văn hóa - Xã hội</option>
+                        <option value="van_phong">Văn phòng - Thống kê</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit">Đăng ký tài khoản</button>
+        </form>
+        <div class="footer">
+            Đã có tài khoản? <a href="/login_ui">Đăng nhập</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reg-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                full_name: document.getElementById('full_name').value,
+                age: parseInt(document.getElementById('age').value),
+                department: document.getElementById('department').value
+            };
+
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert('Đăng ký thành công!');
+                window.location.href = '/login_ui';
+            } else {
+                const err = await res.json();
+                alert('Lỗi: ' + err.detail);
+            }
+        };
+    </script>
+</body>
+</html>

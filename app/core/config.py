@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     COLLECTION_CHAT_HISTORY: str = "chat_history"
     COLLECTION_UPLOADED_FILES: str = "uploaded_files"
     COLLECTION_VECTOR_CACHE: str = "vector_search_cache"
+    COLLECTION_USERS: str = "users"
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
@@ -33,6 +34,11 @@ class Settings(BaseSettings):
     APP_TITLE: str = "Trợ lý Hành chính Xã"
     APP_VERSION: str = "2.0.0"
     CORS_ORIGINS: list[str] = ["*"]
+
+    # Security
+    SECRET_KEY: str = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 480  # 8 hours
 
     class Config:
         env_file = ".env"

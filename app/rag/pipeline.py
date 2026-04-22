@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 def rag_chat_stream(
-    query: str, session_id: str, history: list[dict] = None
+    query: str, session_id: str, history: list[dict] = None, department: str = "public"
 ) -> Generator[str, None, None]:
     """
     Streaming RAG — Trả về từng chunk JSON chuỗi cho Client.
@@ -40,7 +40,7 @@ def rag_chat_stream(
         history = []
 
     # 1. Search (Sync - but can be async later)
-    search_result = search_vectors(query)
+    search_result = search_vectors(query, department=department)
     results = search_result["results"]
 
     if not results:
@@ -184,10 +184,9 @@ def extract_text_from_bytes(content: bytes, file_type: str) -> list[dict]:
 
 
 def ingest_file(
-    content: bytes,
-    file_name: str,
     file_type: str,
     file_id: str,
+    department: str = "public",
 ) -> dict:
     """
     Pipeline nạp tài liệu vào MongoDB bằng LangChain.
@@ -214,6 +213,7 @@ def ingest_file(
                 "file_type": file_type.lstrip("."),
                 "file_hash": file_hash,
                 "page_num": page["page_num"],
+                "department": department,
                 "ingested_at": datetime.now(timezone.utc).isoformat(),
             },
         )
@@ -287,7 +287,7 @@ def get_query_embedding(query: str) -> list[float]:
     return vector
 
 
-def search_vectors(query: str, top_k: int = None) -> dict:
+def search_vectors(query: str, top_k: int = None, department: str = None) -> dict:
     """
     H\u1ec7 th\u1ed1ng Hybrid Search: K\u1ebft h\u1ee3p Vector Search v\u00e0 Keyword Search d\u00f9ng RRF.
     Tr\u1ea3 v\u1ec1: {query_vector, results, cached, search_time_ms}
@@ -304,7 +304,7 @@ def search_vectors(query: str, top_k: int = None) -> dict:
 
     # Chu\u1ea9n h\u00f3a query \u0111\u1ec3 cache chính x\u00e1c
     query_norm = query.strip().lower()
-    query_hash = hashlib.md5(query_norm.encode()).hexdigest()
+    query_hash = hashlib.md5(f"{query_norm}_{department}".encode()).hexdigest()
     cached = cache_col.find_one({"query_hash": query_hash, "top_k": top_k})
 
     if cached:
@@ -322,8 +322,11 @@ def search_vectors(query: str, top_k: int = None) -> dict:
     # 1. L\u1ea5y Vector Embedding cho query
     query_vector = get_query_embedding(query)
 
-    # 2. Vector Search (Semantic) - Native-like Math Fallback cho Local Mongo
-    try:
+        # Thêm filter theo bộ phận (hoặc public)
+        search_filter = {}
+        if department:
+            search_filter = {"$or": [{"metadata.department": department}, {"metadata.department": "public"}]}
+
         # Thử VectorSearch trước
         vector_results = list(
             docs_col.aggregate(
@@ -335,6 +338,7 @@ def search_vectors(query: str, top_k: int = None) -> dict:
                             "queryVector": query_vector,
                             "numCandidates": top_k * 10,
                             "limit": top_k * 2,
+                            "filter": search_filter if search_filter else None
                         }
                     },
                     {
@@ -381,9 +385,13 @@ def search_vectors(query: str, top_k: int = None) -> dict:
         )
 
     # 3. Keyword Search (Full-text) d\u00f9ng $text index
+    keyword_query = {"$text": {"$search": query}}
+    if department:
+        keyword_query["$or"] = [{"metadata.department": department}, {"metadata.department": "public"}]
+
     keyword_results = list(
         docs_col.find(
-            {"$text": {"$search": query}},
+            keyword_query,
             {"_id": 0, "content": 1, "metadata": 1, "score": {"$meta": "textScore"}},
         )
         .sort([("score", {"$meta": "textScore"})])
@@ -510,7 +518,7 @@ def build_context_from_results(results: list[dict]) -> str:
     return context_str
 
 
-def rag_chat(query: str, history: list[dict] = None) -> dict:
+def rag_chat(query: str, history: list[dict] = None, department: str = "public") -> dict:
     """
     Hàm chat chính dùng LangChain LCEL pipeline.
     Returns: {answer, sources, query_vector, search_time_ms, cached}
@@ -519,7 +527,7 @@ def rag_chat(query: str, history: list[dict] = None) -> dict:
         history = []
 
     # 1. Vector search (với cache)
-    search_result = search_vectors(query)
+    search_result = search_vectors(query, department=department)
     results = search_result["results"]
 
     if not results:
