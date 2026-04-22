@@ -166,22 +166,28 @@
     }
 
     async function loadFiles() {
-        const res = await fetch('/admin/files', { headers: { 'Authorization': `Bearer ${token}` } });
-        const data = await res.json();
-        const tbody = document.getElementById('files-list-body');
-        if (!data.files || data.files.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">Chưa có t\u1eadp tin nào.</td></tr>';
-            return;
+        try {
+            const res = await fetch('/admin/files', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error("Failed to fetch");
+            const data = await res.json();
+            const tbody = document.getElementById('files-list-body');
+            if (!data.files || data.files.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">Chưa có t\u1eadp tin nào.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.files.map(f => `
+                <tr>
+                    <td><strong>${f.file_name || 'N/A'}</strong></td>
+                    <td>${f.file_type || 'N/A'}</td>
+                    <td>${(f.department || 'public').toUpperCase()}</td>
+                    <td>${f.uploaded_by || 'Hệ thống'}</td>
+                    <td><span class="badge badge-${f.status === 'completed' ? 'ready' : (f.status === 'error' ? 'error' : 'proc')}">${f.status || 'unknown'}</span></td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error(err);
+            document.getElementById('files-list-body').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--danger);">Lỗi tải dữ liệu.</td></tr>';
         }
-        tbody.innerHTML = data.files.map(f => `
-            <tr>
-                <td><strong>${f.file_name}</strong></td>
-                <td>${f.file_type}</td>
-                <td>${f.department.toUpperCase()}</td>
-                <td>${f.uploaded_by}</td>
-                <td><span class="badge badge-${f.status === 'completed' ? 'ready' : (f.status === 'error' ? 'error' : 'proc')}">${f.status}</span></td>
-            </tr>
-        `).join('');
     }
 
     window.onload = async () => { await checkAuth(); loadStats(); };

@@ -322,11 +322,13 @@ def search_vectors(query: str, top_k: int = None, department: str = None) -> dic
     # 1. L\u1ea5y Vector Embedding cho query
     query_vector = get_query_embedding(query)
 
-        # Thêm filter theo bộ phận (hoặc public)
-        search_filter = {}
-        if department:
-            search_filter = {"$or": [{"metadata.department": department}, {"metadata.department": "public"}]}
+    # Thêm filter theo bộ phận (hoặc public)
+    search_filter = {}
+    if department:
+        search_filter = {"$or": [{"metadata.department": department}, {"metadata.department": "public"}]}
 
+    # 2. Vector Search (Semantic)
+    try:
         # Thử VectorSearch trước
         vector_results = list(
             docs_col.aggregate(

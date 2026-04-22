@@ -37,7 +37,7 @@ app.add_middleware(
 )
 
 # Auth Configuration
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # MongoDB
@@ -248,7 +248,7 @@ async def get_stats():
     return {"total_chunks": count, "total_files": files}
 
 @app.get("/admin/files")
-async def list_files():
+async def list_files(current_user: User = Depends(get_current_user)):
     files = list(files_col.find({}, {"_id": 0}).sort("created_at", -1))
     return {"files": files}
 
