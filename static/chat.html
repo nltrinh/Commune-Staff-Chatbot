@@ -448,6 +448,7 @@
     }
 
     async function sendMessage() {
+        const container = document.getElementById('chat-messages');
         const input = document.getElementById('user-input');
         const text = input.value.trim();
         if (!text) return;
