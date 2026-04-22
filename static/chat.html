@@ -487,7 +487,18 @@
         loadSessions();
     }
 
-    window.onload = () => { loadSessions(); loadCurrentChat(); };
+    window.onload = () => { 
+        loadSessions(); 
+        loadCurrentChat(); 
+
+        // Thêm sự kiện Enter để gửi tin nhắn
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    };
 </script>
 </body>
 </html>
