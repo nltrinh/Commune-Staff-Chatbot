@@ -1,8 +1,8 @@
 """
-LangChain RAG Pipeline — Chatbot Gành Đá Đĩa
+LangChain RAG Pipeline — Trợ lý Số Cán bộ Xã
 Dùng LangChain 0.3+ với:
-  - OllamaEmbeddings (nomic-embed-text)
-  - OllamaLLM (llama3.2:1b)
+  - OllamaEmbeddings (all-minilm)
+  - OllamaLLM (qwen2.5:14b)
   - MongoDBAtlasVectorSearch
   - RecursiveCharacterTextSplitter
 """
@@ -238,33 +238,34 @@ def ingest_file(
     saved = 0
     skipped = 0
 
-    # Nhúng từng batch để theo dõi tiến độ
-    BATCH_SIZE = 5
-    for batch_start in range(0, len(chunks), BATCH_SIZE):
-        batch = chunks[batch_start : batch_start + BATCH_SIZE]
-        texts = [c.page_content for c in batch]
+    # Nhúng từng chunk để theo dõi tiến độ và xử lý lỗi
+    for i, chunk in enumerate(chunks):
+        text = chunk.page_content
+        doc_id = chunk.metadata["doc_id"]
 
-        # Tạo embeddings
-        vectors = embeddings.embed_documents(texts)
+        # Kiểm tra trùng lặp
+        if collection.find_one({"metadata.doc_id": doc_id}):
+            skipped += 1
+            continue
 
-        for chunk, vector in zip(batch, vectors):
-            doc_id = chunk.metadata["doc_id"]
-
-            # Kiểm tra trùng lặp
-            if collection.find_one({"metadata.doc_id": doc_id}):
-                skipped += 1
-                continue
-
+        try:
+            # Tạo embedding cho từng chunk
+            vector = embeddings.embed_query(text)
+            
             # Lưu vào MongoDB
             mongo_doc = {
-                "doc_id": doc_id,  # Để thỏa mãn unique index doc_id_1
-                "content": chunk.page_content,
+                "doc_id": doc_id,
+                "content": text,
                 "embedding": vector,
                 "metadata": chunk.metadata,
                 "created_at": datetime.now(timezone.utc),
             }
             collection.insert_one(mongo_doc)
             saved += 1
+        except Exception as e:
+            logger.error(f"❌ Lỗi embedding chunk {i} của file {file_name}: {e}")
+            logger.error(f"Nội dung lỗi: {text[:200]}...")
+            continue
 
     logger.info(f"✅ Ingest '{file_name}': {saved} chunks saved, {skipped} skipped")
     client.close()
@@ -464,14 +465,14 @@ def search_vectors(query: str, top_k: int = None) -> dict:
 
 # ── RAG Chain (LangChain LCEL) ─────────────────────────────────────────────────
 
-PROMPT_TEMPLATE = """Bạn là Trợ lý AI Du lịch chuyên trách về Danh thắng Gành Đá Đĩa. Nhiệm vụ của bạn là giải đáp thông tin cho du khách dựa TRÊN TÀI LIỆU THAM KHẢO được cung cấp bên dưới.
+PROMPT_TEMPLATE = """Bạn là Trợ lý Số Cán bộ Xã chuyên trách về nghiệp vụ và thủ tục hành chính cấp cơ sở. Nhiệm vụ của bạn là giải đáp thông tin cho cán bộ, nhân dân dựa TRÊN TÀI LIỆU THAM KHẢO được cung cấp bên dưới.
 
 🚨 QUY TẮC NGHIÊM NGẶT:
 1. CHỈ sử dụng thông tin có trong "TÀI LIỆU THAM KHẢO". Nếu thông tin không có, hãy lịch sự từ chối trả lời và nói rằng tài liệu hiện tại không đề cập đến.
-2. KHÔNG tự bịa đặt, suy đoán con số, sự kiện hoặc chi tiết địa lý.
+2. KHÔNG tự bịa đặt, suy đoán quy trình hoặc các văn bản pháp luật không có trong nguồn.
 3. LUÔN trích dẫn nguồn ([số thứ tự nguồn]) ngay sau thông tin bạn lấy từ tài liệu.
-4. Trình bày thông tin rõ ràng, dễ đọc bằng Markdown (Dùng in đậm, gạch đầu dòng nếu cần thiết để du khách dễ theo dõi).
-5. Giữ thái độ nhiệt tình, thân thiện và chào mừng du khách.
+4. Trình bày thông tin chuyên nghiệp, rõ ràng bằng Markdown.
+5. Giữ thái độ trung thực, chuẩn mực của một cán bộ hành chính.
 
 TÀI LIỆU THAM KHẢO:
 {context}
@@ -481,7 +482,7 @@ LỊCH SỬ HỘI THOẠI:
 
 CÂU HỎI CỦA NGƯỜI DÙNG: {question}
 
-Hãy đưa ra câu trả lời cho du khách:"""
+Hãy đưa ra câu trả lời chuyên nghiệp:"""
 
 
 def build_context_from_results(results: list[dict]) -> str:
