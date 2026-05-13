@@ -87,14 +87,19 @@ class RAGService:
         # 1. Search context
         results = self.search_context(query, department)
         
-        # 2. Build context string
+        # 2. Guardrail: If no results, don't even call the AI
+        if not results:
+            yield "Xin lỗi, hiện tại tôi không tìm thấy thông tin nào liên quan đến câu hỏi của bạn trong cơ sở dữ liệu tài liệu được cung cấp. Vui lòng nạp thêm tài liệu hoặc kiểm tra lại nội dung câu hỏi."
+            return
+
+        # 3. Build context string
         context_parts = []
         for i, res in enumerate(results, 1):
             source = res['metadata'].get('source', 'Unknown')
             context_parts.append(f"[{i}] Nguồn: {source}\n{res['content']}")
         context = "\n\n".join(context_parts)
         
-        # 3. Stream response
+        # 4. Stream response
         for chunk in self.ai.stream_chat(query, context, history):
             yield chunk
 
@@ -102,7 +107,14 @@ class RAGService:
         # 1. Search context
         results = self.search_context(query, department)
         
-        # 2. Build context string
+        # 2. Guardrail
+        if not results:
+            return {
+                "answer": "Xin lỗi, hiện tại tôi không tìm thấy thông tin nào liên quan đến câu hỏi của bạn trong cơ sở dữ liệu tài liệu được cung cấp. Vui lòng nạp thêm tài liệu hoặc kiểm tra lại nội dung câu hỏi.",
+                "sources": []
+            }
+
+        # 3. Build context string
         context_parts = []
         for i, res in enumerate(results, 1):
             source = res['metadata'].get('source', 'Unknown')

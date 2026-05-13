@@ -38,10 +38,50 @@ class MongoDBVectorProvider(VectorStoreProvider):
                 
             return list(self.collection.aggregate(pipeline))
         except Exception as e:
-            logger.warning(f"Vector Search ({settings.MONGODB_VECTOR_MODE}) failed: {e}")
-            # Robust fallback: exact match filtering (no semantic score)
-            results = list(self.collection.find(filter_dict or {}).sort("created_at", -1).limit(top_k))
-            return [{"content": r["content"], "metadata": r["metadata"], "score": 0.0} for r in results]
+            logger.warning(f"Vector Search ({settings.MONGODB_VECTOR_MODE}) failed or index missing: {e}. Falling back to Python-based Similarity Search.")
+            
+            # Smart Fallback: Manual Cosine Similarity in Python
+            try:
+                import numpy as np
+                # 1. Fetch candidates (limit to 1000 for performance if dataset is huge, but here it's small)
+                cursor = self.collection.find(filter_dict or {}).limit(2000)
+                candidates = list(cursor)
+                
+                if not candidates:
+                    return []
+
+                # 2. Calculate similarities
+                query_vec = np.array(query_vector)
+                results = []
+                
+                for doc in candidates:
+                    if "embedding" not in doc: continue
+                    doc_vec = np.array(doc["embedding"])
+                    
+                    # Cosine Similarity = (A . B) / (||A|| * ||B||)
+                    norm_a = np.linalg.norm(query_vec)
+                    norm_b = np.linalg.norm(doc_vec)
+                    
+                    if norm_a == 0 or norm_b == 0:
+                        score = 0.0
+                    else:
+                        score = np.dot(query_vec, doc_vec) / (norm_a * norm_b)
+                    
+                    results.append({
+                        "content": doc["content"],
+                        "metadata": doc["metadata"],
+                        "score": float(score)
+                    })
+                
+                # 3. Sort and return top_k
+                results.sort(key=lambda x: x["score"], reverse=True)
+                return results[:top_k]
+                
+            except Exception as fe:
+                logger.error(f"Critical Fallback Error: {fe}")
+                # Ultimate fallback: just return recent if all else fails
+                results = list(self.collection.find(filter_dict or {}).sort("created_at", -1).limit(top_k))
+                return [{"content": r["content"], "metadata": r["metadata"], "score": 0.0} for r in results]
 
     def _get_atlas_pipeline(self, query_vector: List[float], top_k: int, filter_dict: Dict[str, Any]) -> List[Dict[str, Any]]:
         return [
