@@ -9,37 +9,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        :root {
-            --bg: #f3f4f6;
+        :root[data-theme="light"] {
+            --bg: #f8fafc;
             --surface: #ffffff;
-            --sidebar-bg: #1e3a8a;
-            --sidebar-text: #e0e7ff;
-            --border: #e5e7eb;
-            --text: #111827;
-            --text-dim: #6b7280;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-glow: rgba(37, 99, 235, 0.1);
-            --success: #10b981;
-            --user-bubble: #2563eb;
+            --sidebar-bg: #0f172a;
+            --sidebar-text: rgba(255, 255, 255, 0.7);
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-dim: #64748b;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.1);
+            --user-bubble: #3b82f6;
             --bot-bubble: #ffffff;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --radius: 12px;
+            --glass: rgba(255, 255, 255, 0.8);
         }
 
-        [data-theme="dark"] {
-            --bg: #0f172a;
+        :root[data-theme="dark"] {
+            --bg: #020617;
             --surface: #1e293b;
-            --sidebar-bg: #020617;
+            --sidebar-bg: #0f172a;
+            --sidebar-text: rgba(255, 255, 255, 0.6);
             --border: #334155;
             --text: #f1f5f9;
             --text-dim: #94a3b8;
             --primary: #3b82f6;
+            --user-bubble: #3b82f6;
             --bot-bubble: #1e293b;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --glass: rgba(15, 23, 42, 0.8);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.2s ease; }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, border 0.3s, color 0.3s; }
         
         body {
             font-family: 'Inter', sans-serif;
@@ -54,30 +53,24 @@
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
-            color: var(--sidebar-text);
+            color: white;
             display: flex;
             flex-direction: column;
-            z-index: 50;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
         }
 
         .sidebar-header {
-            padding: 32px 24px;
+            padding: 40px 24px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 12px;
         }
 
-        .logo-box {
-            width: 48px;
-            height: 48px;
-            background: #fff;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--sidebar-bg);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .logo-icon {
+            width: 40px; height: 40px; background: var(--primary);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
         }
 
         .logo-text h1 {
@@ -87,7 +80,7 @@
             color: #fff;
             letter-spacing: -0.5px;
         }
-        .logo-text p { font-size: 12px; opacity: 0.7; }
+        .logo-text p { font-size: 11px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
         .nav-section {
             flex: 1;
@@ -99,45 +92,110 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0.5;
-            margin: 24px 0 12px 12px;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.3);
+            margin: 32px 0 12px 12px;
         }
 
         .new-chat-btn {
             margin: 0 16px 24px;
-            padding: 12px;
-            background: rgba(255,255,255,0.1);
+            padding: 14px;
+            background: var(--primary);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px;
-            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: 0.3s;
         }
-        .new-chat-btn:hover { background: rgba(255,255,255,0.2); border-color: #fff; }
+        .new-chat-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
 
         .history-item {
             padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 12px;
+            font-size: 13.5px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             margin-bottom: 4px;
+            color: var(--sidebar-text);
+            position: relative;
         }
-        .history-item:hover { background: rgba(255,255,255,0.05); }
-        .history-item.active { background: #fff; color: var(--sidebar-bg); font-weight: 600; }
+        .history-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .history-item.active { background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; }
+
+        .delete-session-btn {
+            opacity: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            cursor: pointer;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.1);
+        }
+        .history-item:hover .delete-session-btn { opacity: 1; }
+        .delete-session-btn:hover { background: var(--primary); }
+
+        /* Dropdown Menu */
+        .session-menu {
+            position: absolute;
+            right: 16px;
+            top: 45px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none;
+            min-width: 140px;
+            animation: menuFade 0.2s ease-out;
+        }
+        [data-theme="dark"] .session-menu {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        @keyframes menuFade {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .menu-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .menu-item:hover { background: rgba(239, 68, 68, 0.1); }
 
         .sidebar-footer {
             padding: 24px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 12px;
-            opacity: 0.6;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
         /* ── Main Chat ── */
@@ -146,177 +204,162 @@
             display: flex;
             flex-direction: column;
             background: var(--bg);
+            position: relative;
         }
 
         .header {
-            height: 70px;
-            padding: 0 32px;
+            height: 80px;
+            padding: 0 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--surface);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            z-index: 90;
         }
 
-        .header-title { display: flex; align-items: center; gap: 12px; }
-        .status-badge {
-            background: #dcfce7;
-            color: #166534;
-            padding: 4px 10px;
-            border-radius: 20px;
+        .header-info { display: flex; align-items: center; gap: 16px; }
+        .dept-tag {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 10px;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .header-actions { display: flex; gap: 8px; }
+        .action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn:hover { background: var(--bg); border-color: var(--primary); }
 
         .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 40px 20px;
+            padding: 40px 0;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            scroll-behavior: smooth;
         }
 
         .msg-row {
+            padding: 12px 40px;
             display: flex;
-            gap: 16px;
-            max-width: 900px;
+            gap: 20px;
+            max-width: 1000px;
             width: 100%;
             margin: 0 auto;
+            animation: messagePop 0.3s ease-out;
         }
+        @keyframes messagePop {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .msg-row.user { flex-direction: row-reverse; }
 
         .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-            box-shadow: var(--shadow);
+            width: 44px; height: 44px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         .bot .avatar { background: var(--sidebar-bg); color: #fff; }
         .user .avatar { background: var(--primary); color: #fff; }
 
         .msg-bubble {
-            max-width: 70%;
-            padding: 16px 20px;
-            border-radius: 16px;
+            max-width: 75%;
+            padding: 18px 24px;
+            border-radius: 20px;
             font-size: 15px;
-            line-height: 1.6;
-            box-shadow: var(--shadow);
+            line-height: 1.7;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
-        .user .msg-bubble { background: var(--user-bubble); color: #fff; border-top-right-radius: 2px; }
-        .bot .msg-bubble { background: var(--bot-bubble); color: var(--text); border-top-left-radius: 2px; border: 1px solid var(--border); }
+        .user .msg-bubble { background: var(--user-bubble); color: #fff; border-top-right-radius: 4px; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2); }
+        .bot .msg-bubble { background: var(--bot-bubble); color: var(--text); border-top-left-radius: 4px; border: 1px solid var(--border); }
 
-        /* ── Welcome Screen ── */
-        .welcome-screen {
-            max-width: 800px;
-            margin: auto;
-            text-align: center;
-            padding: 40px;
-        }
-        .welcome-screen h2 { font-family: 'Lexend'; font-size: 32px; margin-bottom: 16px; color: var(--sidebar-bg); }
-        .welcome-screen p { color: var(--text-dim); font-size: 16px; margin-bottom: 40px; }
+        /* Welcome Suggestions */
+        .welcome-container { max-width: 800px; margin: auto; text-align: center; padding: 40px; }
+        .welcome-container h2 { font-family: 'Lexend'; font-size: 36px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px; }
+        .welcome-container p { color: var(--text-dim); font-size: 16px; margin-bottom: 48px; }
 
-        .grid-suggestions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+        .suggestions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .suggestion-card {
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 24px; border-radius: 20px; text-align: left;
+            cursor: pointer; transition: 0.3s;
         }
-        .suggest-item {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: 16px;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .suggest-item:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .suggest-item h4 { margin-bottom: 8px; font-size: 15px; color: var(--primary); }
-        .suggest-item p { font-size: 13px; margin: 0; }
+        .suggestion-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
+        .suggestion-card h4 { margin-bottom: 8px; color: var(--primary); font-family: 'Lexend'; }
+        .suggestion-card p { font-size: 14px; color: var(--text-dim); margin: 0; }
 
-        /* ── Input Area ── */
-        .input-wrapper {
-            padding: 24px;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-        }
+        /* Input Area */
+        .input-section { padding: 32px 40px; background: linear-gradient(to top, var(--bg) 80%, transparent); }
         .input-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: flex-end;
-            gap: 12px;
+            max-width: 1000px; margin: 0 auto;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 24px; padding: 12px 20px;
+            display: flex; align-items: flex-end; gap: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         textarea {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: var(--text);
-            font-size: 15px;
-            padding: 12px 0;
-            resize: none;
-            max-height: 150px;
+            flex: 1; background: transparent; border: none; outline: none;
+            color: var(--text); font-size: 16px; padding: 12px 0;
+            resize: none; max-height: 200px; font-family: inherit;
         }
         .send-btn {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 4px;
+            background: var(--primary); color: #fff; border: none;
+            width: 48px; height: 48px; border-radius: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 4px; transition: 0.3s;
         }
-        .send-btn:hover { background: var(--primary-hover); }
+        .send-btn:hover { background: #2563eb; transform: scale(1.05); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Settings Modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--surface);
-            width: 500px;
-            border-radius: 24px;
-            padding: 32px;
-        }
+        /* Modal */
+        .modal { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--surface); width: 100%; max-width: 440px; border-radius: 32px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
+        .modal-header h3 { font-family: 'Lexend'; font-size: 24px; margin-bottom: 32px; }
+        .form-group { margin-bottom: 24px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { width: 100%; padding: 14px 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg); color: var(--text); font-size: 15px; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 32px; }
+        .btn-modal { flex: 1; padding: 14px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-box">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
             <div class="logo-text">
                 <h1>TRỢ LÝ SỐ</h1>
-                <p>Cán bộ Hành chính Xã</p>
+                <p>Nghiệp vụ Hành chính</p>
             </div>
         </div>
 
         <button class="new-chat-btn" onclick="createNewSession()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"></path></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"></path></svg>
             Hội thoại mới
         </button>
 
@@ -326,31 +369,66 @@
         </nav>
 
         <div class="sidebar-footer">
-            Phiên bản v2.5.0<br>
-            Hệ thống nghiệp vụ nội bộ
+            <div class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </div>
+            <span style="font-size: 11px; opacity: 0.3; font-weight: 700;">VERSION 2.5.0</span>
         </div>
     </aside>
 
     <main class="chat-main">
         <header class="header">
-            <div class="header-title">
-                <span class="status-badge" id="user-dept">Đang tải...</span>
-                <h2 style="font-size: 16px; font-weight: 600;" id="user-fullname">Hệ thống Nghiệp vụ</h2>
+            <div class="header-info">
+                <span class="dept-tag" id="user-dept">...</span>
+                <h2 style="font-size: 16px; font-weight: 700; letter-spacing: -0.3px;" id="user-fullname">Hệ thống Trợ lý</h2>
             </div>
-            <div style="display:flex; gap:12px;">
-                <button class="new-chat-btn" style="margin:0; padding:8px 16px; background:var(--bg); color:var(--text); border-color:var(--border);" onclick="location.href='/admin/ui'">Quản lý</button>
-                <button class="new-chat-btn" style="margin:0; padding:8px 16px; background:var(--bg); color:#dc2626; border-color:var(--border);" onclick="logout()">Đăng xuất</button>
+            <div class="header-actions">
+                <button class="action-btn" onclick="openPasswordModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    Mật khẩu
+                </button>
+                <button class="action-btn" onclick="location.href='/admin/ui'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Quản trị
+                </button>
+                <button class="action-btn" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.2);" onclick="logout()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Đăng xuất
+                </button>
             </div>
         </header>
 
         <div class="messages-container" id="chat-messages"></div>
 
-        <div class="input-wrapper">
+        <div class="input-section">
             <div class="input-container">
-                <textarea id="user-input" placeholder="Nhập câu hỏi nghiệp vụ tại đây..." rows="1" oninput="autoExpand(this)"></textarea>
+                <textarea id="user-input" placeholder="Nhập câu hỏi nghiệp vụ..." rows="1" oninput="autoExpand(this)"></textarea>
                 <button class="send-btn" id="send-btn" onclick="sendMessage()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
                 </button>
+            </div>
+        </div>
+
+        <!-- Modal Change Password -->
+        <div class="modal" id="password-modal">
+            <div class="modal-content">
+                <div class="modal-header"><h3>Đổi mật khẩu</h3></div>
+                <div class="form-group">
+                    <label>Mật khẩu hiện tại</label>
+                    <input type="password" id="old-pass">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" id="new-pass">
+                </div>
+                <div class="form-group">
+                    <label>Xác nhận lại</label>
+                    <input type="password" id="confirm-pass">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-modal" style="background:var(--bg); color:var(--text);" onclick="closePasswordModal()">Hủy</button>
+                    <button class="btn-modal" style="background:var(--primary); color:#fff;" onclick="submitChangePassword()">Cập nhật ngay</button>
+                </div>
             </div>
         </div>
     </main>
@@ -362,23 +440,58 @@
     let sessionId = localStorage.getItem('commune_session_id') || Math.random().toString(36).substring(7);
     localStorage.setItem('commune_session_id', sessionId);
 
-    async function checkAuth() {
-        const res = await fetch('/users/me', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) {
-            localStorage.removeItem('commune_token');
-            window.location.href = '/login_ui';
+    // Theme Logic
+    function toggleTheme() {
+        const root = document.documentElement;
+        const current = root.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+        const theme = document.documentElement.getAttribute('data-theme');
+        const btn = document.getElementById('theme-btn');
+        if (theme === 'dark') {
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
         } else {
-            const user = await res.json();
-            document.getElementById('user-fullname').innerText = user.full_name;
-            document.getElementById('user-dept').innerText = user.department.toUpperCase().replace('_', ' ');
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
         }
     }
 
-    function logout() {
-        localStorage.removeItem('commune_token');
-        window.location.href = '/login_ui';
+    async function checkAuth() {
+        try {
+            const res = await fetch('/users/me', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error();
+            const user = await res.json();
+            document.getElementById('user-fullname').innerText = user.full_name;
+            document.getElementById('user-dept').innerText = user.department.toUpperCase().replace('_', ' ');
+        } catch(e) { logout(); }
+    }
+
+    function logout() { localStorage.removeItem('commune_token'); window.location.href = '/login_ui'; }
+
+    function openPasswordModal() { document.getElementById('password-modal').style.display = 'flex'; }
+    function closePasswordModal() { 
+        document.getElementById('password-modal').style.display = 'none';
+        document.getElementById('old-pass').value = '';
+        document.getElementById('new-pass').value = '';
+        document.getElementById('confirm-pass').value = '';
+    }
+
+    async function submitChangePassword() {
+        const oldP = document.getElementById('old-pass').value;
+        const newP = document.getElementById('new-pass').value;
+        const confP = document.getElementById('confirm-pass').value;
+        if (newP !== confP) return alert("Mật khẩu mới không khớp!");
+        const res = await fetch('/users/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ old_password: oldP, new_password: newP })
+        });
+        if (res.ok) { alert("Thành công!"); closePasswordModal(); }
+        else { const d = await res.json(); alert(d.detail); }
     }
 
     function autoExpand(el) {
@@ -389,48 +502,89 @@
     function renderWelcome() {
         const container = document.getElementById('chat-messages');
         container.innerHTML = `
-            <div class="welcome-screen">
-                <h2>Hỗ trợ Nghiệp vụ Cán bộ Xã</h2>
-                <p>Tra cứu nhanh các quy định, quy trình và biểu mẫu hành chính cấp cơ sở từ Cẩm nang chính quyền địa phương.</p>
-                <div class="grid-suggestions">
-                    <div class="suggest-item" onclick="ask('Quy trình bầu Trưởng thôn, Tổ trưởng tổ dân phố?')">
+            <div class="welcome-container">
+                <h2>Xin chào Cán bộ!</h2>
+                <p>Tôi là Trợ lý Số đồng hành cùng bạn trong nghiệp vụ hành chính xã.</p>
+                <div class="suggestions-grid">
+                    <div class="suggestion-card" onclick="ask('Quy trình bầu Trưởng thôn?')">
                         <h4>👥 Bầu cử cơ sở</h4>
                         <p>Tìm hiểu quy trình bầu, miễn nhiệm Trưởng thôn, Tổ trưởng dân phố.</p>
                     </div>
-                    <div class="suggest-item" onclick="ask('Trách nhiệm của UBND xã trong quản lý đất đai?')">
+                    <div class="suggestion-card" onclick="ask('Trách nhiệm của UBND xã về đất đai?')">
                         <h4>🏠 Quản lý đất đai</h4>
-                        <p>Các quy định về thẩm quyền của cấp xã trong lĩnh vực đất đai.</p>
+                        <p>Tra cứu thẩm quyền của cấp xã trong lĩnh vực quản lý đất đai.</p>
                     </div>
-                    <div class="suggest-item" onclick="ask('Thủ tục công khai quyết định của Hội đồng nhân dân?')">
+                    <div class="suggestion-card" onclick="ask('Cách niêm yết công khai văn bản?')">
                         <h4>📄 Công khai thông tin</h4>
-                        <p>Quy định về việc niêm yết, thông báo các quyết định quan trọng.</p>
+                        <p>Quy định về việc niêm yết các quyết định quan trọng tại trụ sở.</p>
                     </div>
-                    <div class="suggest-item" onclick="ask('Chế độ phụ cấp cho cán bộ không chuyên trách?')">
-                        <h4>💰 Chế độ chính sách</h4>
-                        <p>Tra cứu các quy định về phụ cấp và quyền lợi của cán bộ xã.</p>
+                    <div class="suggestion-card" onclick="ask('Chế độ phụ cấp cán bộ?')">
+                        <h4>💰 Chính sách cán bộ</h4>
+                        <p>Tra cứu các quy định về phụ cấp cho cán bộ cấp xã.</p>
                     </div>
                 </div>
             </div>
         `;
     }
 
-    function ask(txt) {
-        document.getElementById('user-input').value = txt;
-        autoExpand(document.getElementById('user-input'));
-        sendMessage();
-    }
+    function ask(txt) { document.getElementById('user-input').value = txt; autoExpand(document.getElementById('user-input')); sendMessage(); }
 
     async function loadSessions() {
-        const res = await fetch('/sessions', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch('/sessions', { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
         const list = document.getElementById('history-list');
         list.innerHTML = '';
-        if (data.sessions) {
-            data.sessions.forEach(s => {
-                list.innerHTML += `<div class="history-item ${s.id === sessionId ? 'active' : ''}" onclick="switchSession('${s.id}')"><span>${s.title}</span></div>`;
-            });
+        data.sessions?.forEach(s => {
+            const item = document.createElement('div');
+            item.className = `history-item ${s.id === sessionId ? 'active' : ''}`;
+            item.onclick = () => switchSession(s.id);
+            item.innerHTML = `
+                <div style="flex:1; min-width:0; display:flex; align-items:center; gap:12px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:0.4; flex-shrink:0;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.title}</span>
+                </div>
+                <div class="delete-session-btn" onclick="event.stopPropagation(); toggleSessionMenu(event, '${s.id}')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg>
+                </div>
+                <div id="menu-${s.id}" class="session-menu">
+                    <div class="menu-item" onclick="event.stopPropagation(); deleteSession('${s.id}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2 2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        Xóa hội thoại
+                    </div>
+                </div>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    function toggleSessionMenu(event, id) {
+        // Đóng tất cả menu khác
+        document.querySelectorAll('.session-menu').forEach(m => {
+            if (m.id !== `menu-${id}`) m.style.display = 'none';
+        });
+        const menu = document.getElementById(`menu-${id}`);
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Đóng menu khi bấm ra ngoài
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.session-menu').forEach(m => m.style.display = 'none');
+    });
+
+    async function deleteSession(id) {
+        if (!confirm("Bạn có chắc chắn muốn xóa hội thoại này?")) return;
+        const res = await fetch(`/history/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            if (id === sessionId) {
+                createNewSession();
+            } else {
+                loadSessions();
+            }
+        } else {
+            alert("Không thể xóa hội thoại.");
         }
     }
 
@@ -449,22 +603,18 @@
     }
 
     async function loadCurrentChat() {
-        const res = await fetch(`/history/${sessionId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch(`/history/${sessionId}`, { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
         const container = document.getElementById('chat-messages');
-        if (data.messages && data.messages.length > 0) {
+        if (data.messages?.length) {
             container.innerHTML = '';
             data.messages.forEach(m => appendUI(m.role, m.content));
-        } else {
-            renderWelcome();
-        }
+        } else renderWelcome();
     }
 
     function appendUI(role, content) {
         const container = document.getElementById('chat-messages');
-        if (container.querySelector('.welcome-screen')) container.innerHTML = '';
+        if (container.querySelector('.welcome-container')) container.innerHTML = '';
         const row = document.createElement('div');
         row.className = `msg-row ${role}`;
         row.innerHTML = `
@@ -477,7 +627,6 @@
     }
 
     async function sendMessage() {
-        const container = document.getElementById('chat-messages');
         const input = document.getElementById('user-input');
         const text = input.value.trim();
         if (!text) return;
@@ -490,17 +639,9 @@
 
         const res = await fetch('/chat/stream', {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ message: text, session_id: sessionId })
         });
-
-        if (!res.ok) {
-            bubble.innerHTML = "Lỗi kết nối hoặc phiên đăng nhập hết hạn.";
-            return;
-        }
 
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
@@ -519,21 +660,22 @@
                     } catch(e) {}
                 }
             });
-            container.scrollTop = container.scrollHeight;
+            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
         loadSessions();
     }
 
-    window.onload = async () => { 
+    // Init
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon();
+    
+    window.onload = async () => {
         await checkAuth();
-        loadSessions(); 
-        loadCurrentChat(); 
-
-        document.getElementById('user-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
+        loadSessions();
+        loadCurrentChat();
+        document.getElementById('user-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         });
     };
 </script>

@@ -3,68 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập — Trợ lý Số Cán bộ Xã</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@600;800&display=swap" rel="stylesheet">
+    <title>Đăng nhập — Hệ thống Trợ lý Số v2.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --bg: #f3f4f6; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h1 { font-family: 'Lexend'; font-size: 24px; color: #1e3a8a; margin-bottom: 8px; }
-        p { color: #6b7280; font-size: 14px; margin-bottom: 32px; }
-        .form-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #374151; }
-        input { width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 15px; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #1d4ed8; }
-        .footer { margin-top: 24px; font-size: 14px; color: #6b7280; }
-        .footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
-        .error { color: #dc2626; font-size: 13px; margin-top: 10px; display: none; }
+        :root {
+            --primary: #10b981;
+            --primary-rgb: 16, 185, 129;
+            --secondary: #064e3b;
+            --accent: #f59e0b;
+            --bg-body: #fbfbfc;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow-sm: 0 10px 40px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 20px 60px rgba(0, 0, 0, 0.08);
+            --total-slides: 3;
+            --slide-index: 0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { height: 100%; font-family: 'Inter', sans-serif; overflow: hidden; background: var(--bg-body); color: var(--text-main); }
+
+        .app-container { display: flex; height: 100vh; width: 100vw; }
+
+        /* --- Left Side: Experience Showcase --- */
+        .showcase-section {
+            flex: 1.2;
+            background: #020617;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Abstract Glow Background */
+        .glow-sphere {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0) 70%);
+            top: -200px;
+            left: -200px;
+            filter: blur(80px);
+            z-index: 1;
+            animation: moveGlow 15s infinite alternate;
+        }
+        @keyframes moveGlow { from { transform: translate(0, 0); } to { transform: translate(100px, 100px); } }
+
+        .slider-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-track {
+            display: flex;
+            height: 100%;
+            width: calc(var(--total-slides) * 100%);
+            transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1);
+            transform: translateX(calc(-1 * (var(--slide-index)) * (100% / var(--total-slides))));
+        }
+
+        .slide {
+            flex: 0 0 calc(100% / var(--total-slides));
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            text-align: center;
+        }
+
+        /* Mockup Glass Card */
+        .mockup-window {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            width: 100%;
+            max-width: 480px;
+            height: 320px;
+            margin-bottom: 50px;
+            position: relative;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: float 6s infinite ease-in-out;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .window-header { display: flex; gap: 8px; margin-bottom: 10px; }
+        .dot-icon { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+        .window-content { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .skeleton-bar { height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; }
+        .skeleton-bar.header { height: 24px; width: 40%; background: var(--primary); opacity: 0.8; margin-bottom: 10px; }
+
+        .slide-text h2 {
+            font-family: 'Lexend';
+            font-size: 42px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+        }
+        .slide-text p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.6);
+            max-width: 460px;
+            line-height: 1.6;
+        }
+
+        .pagination {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+        }
+        .page-dot { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.2); transition: 0.4s; cursor: pointer; }
+        .page-dot.active { background: var(--primary); width: 32px; }
+
+        /* --- Right Side: Login Section --- */
+        .login-section {
+            flex: 0.8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            z-index: 100;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        .brand-logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
+            color: #fff;
+        }
+
+        .login-header h1 { font-family: 'Lexend'; font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+        .login-header p { color: var(--text-dim); font-size: 16px; margin-bottom: 40px; }
+
+        .form-field { margin-bottom: 24px; }
+        .form-field label { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+
+        .input-wrapper { position: relative; }
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 20px;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-size: 15px;
+            color: var(--text-main);
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            display: flex;
+            transition: 0.2s;
+        }
+        .toggle-btn:hover { color: var(--primary); }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+        }
+        .submit-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
+        }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .error-banner {
+            margin-top: 24px;
+            padding: 12px 16px;
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+            border-radius: 12px;
+            color: #b91c1c;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            text-align: center;
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .showcase-section { display: none; }
+            .login-section { flex: 1; background: var(--white); }
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div style="background: #1e3a8a; width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        </div>
-        <h1>Đăng nhập</h1>
-        <p>Hệ thống Trợ lý Hành chính Xã</p>
-        
-        <form id="login-form">
-            <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" id="username" required placeholder="Nhập username">
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="password" required placeholder="••••••••">
-            </div>
-            <button type="submit">Đăng nhập</button>
-            <div id="error-msg" class="error">Sai tên đăng nhập hoặc mật khẩu</div>
-        </form>
 
-        <div class="footer">
-            Chưa có tài khoản? <a href="/register_ui">Đăng ký ngay</a>
-        </div>
+    <div class="app-container">
+        <!-- Left Showcase -->
+        <section class="showcase-section">
+            <div class="glow-sphere"></div>
+            <div class="slider-wrapper">
+                <div class="slider-track" id="slider-track">
+                    <!-- Slide 1 -->
+                    <div class="slide">
+                        <div class="mockup-window">
+                            <div class="window-header">
+                                <div class="dot-icon" style="background:#ff5f56"></div>
+                                <div class="dot-icon" style="background:#ffbd2e"></div>
+                                <div class="dot-icon" style="background:#27c93f"></div>
+                            </div>
+                            <div class="window-content">
+                                <div class="skeleton-bar header"></div>
+                                <div class="skeleton-bar" style="width: 90%"></div>
+                                <div class="skeleton-bar" style="width: 80%"></div>
+                                <div class="skeleton-bar" style="width: 85%; margin-top: 10px;"></div>
+                                <div class="skeleton-bar" style="width: 40%; height: 40px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); margin-top: 15px;"></div>
+                            </div>
+                        </div>
+                        <div class="slide-text">
+                            <h2>Tri thức Số hóa</h2>
+                            <p>Toàn bộ văn bản quy phạm pháp luật được số hóa và sẵn sàng hỗ trợ bạn trong tích tắc.</p>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="slide">
+                        <div class="mockup-window" style="animation-delay: -2s">
+                            <div class="window-header">
+                                <div class="dot-icon" style="background:rgba(255,255,255,0.1)"></div>
+                                <div class="dot-icon" style="background:rgba(255,255,255,0.1)"></div>
+                                <div class="dot-icon" style="background:rgba(255,255,255,0.1)"></div>
+                            </div>
+                            <div class="window-content">
+                                <div style="display:flex; align-items:center; gap: 15px; margin-bottom: 10px;">
+                                    <div style="width:40px; height:40px; border-radius:10px; background:var(--primary);"></div>
+                                    <div class="skeleton-bar" style="width:120px; height:10px;"></div>
+                                </div>
+                                <div style="padding:15px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.05)">
+                                    <div class="skeleton-bar" style="width:100%; margin-bottom:8px;"></div>
+                                    <div class="skeleton-bar" style="width:60%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide-text">
+                            <h2>Trợ lý Nghiệp vụ</h2>
+                            <p>Đồng hành cùng cán bộ trong các quy trình nghiệp vụ hành chính cấp xã một cách chính xác.</p>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="slide">
+                        <div class="mockup-window" style="animation-delay: -4s">
+                            <div class="window-header">
+                                <div class="dot-icon"></div><div class="dot-icon"></div><div class="dot-icon"></div>
+                            </div>
+                            <div class="window-content" style="display:flex; flex-direction:row; gap:15px;">
+                                <div style="flex:1; height:100%; background:rgba(255,255,255,0.02); border-radius:12px; padding:15px;">
+                                    <div class="skeleton-bar" style="height:40px; width:40px; border-radius:8px; background:var(--accent); margin-bottom:15px;"></div>
+                                    <div class="skeleton-bar" style="width:80%;"></div>
+                                </div>
+                                <div style="flex:1; height:100%; background:rgba(16, 185, 129, 0.05); border-radius:12px; border:1px solid rgba(16, 185, 129, 0.1); padding:15px;">
+                                    <div class="skeleton-bar" style="height:40px; width:40px; border-radius:8px; background:var(--primary); margin-bottom:15px;"></div>
+                                    <div class="skeleton-bar" style="width:80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide-text">
+                            <h2>Tối ưu Hiệu suất</h2>
+                            <p>Cải thiện tốc độ xử lý công việc và nâng cao chất lượng phục vụ nhân dân địa phương.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination">
+                <div class="page-dot active" onclick="setSlide(0)"></div>
+                <div class="page-dot" onclick="setSlide(1)"></div>
+                <div class="page-dot" onclick="setSlide(2)"></div>
+            </div>
+        </section>
+
+        <!-- Right Login -->
+        <section class="login-section">
+            <div class="login-card">
+                <div class="brand-logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div class="login-header">
+                    <h1>Chào mừng trở lại</h1>
+                    <p>Vui lòng đăng nhập để truy cập hệ thống nghiệp vụ.</p>
+                </div>
+
+                <form id="login-form">
+                    <div class="form-field">
+                        <label for="username">Tên đăng nhập</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="username" placeholder="Nhập tên đăng nhập của bạn" required autocomplete="username">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="password">Mật khẩu</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" class="toggle-btn" id="togglePassword">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="login-btn">Đăng nhập hệ thống</button>
+                    <div id="error-msg" class="error-banner">Thông tin đăng nhập không chính xác.</div>
+                </form>
+
+                <div class="footer-note">
+                    © 2026 Hệ thống Trợ lý Số v2.5 — Nghiệp vụ Xã thông minh
+                </div>
+            </div>
+        </section>
     </div>
 
     <script>
+        // --- Slider Logic ---
+        let currentIdx = 0;
+        const totalSlides = 3;
+        const track = document.getElementById('slider-track');
+        const dots = document.querySelectorAll('.page-dot');
+
+        function setSlide(idx) {
+            currentIdx = idx;
+            document.documentElement.style.setProperty('--slide-index', currentIdx);
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
+        }
+
+        setInterval(() => {
+            setSlide((currentIdx + 1) % totalSlides);
+        }, 6000);
+
+        // --- Password Toggle ---
+        const toggleBtn = document.getElementById('togglePassword');
+        const passInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        toggleBtn.addEventListener('click', () => {
+            const isPass = passInput.type === 'password';
+            passInput.type = isPass ? 'text' : 'password';
+            eyeIcon.innerHTML = isPass 
+                ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'
+                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+        });
+
+        // --- Form Logic ---
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const error = document.getElementById('error-msg');
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            btn.innerText = "Đang xác thực..."; btn.disabled = true;
+            error.style.display = 'none';
+
             const formData = new FormData();
-            formData.append('username', document.getElementById('username').value);
-            formData.append('password', document.getElementById('password').value);
+            formData.append('username', user);
+            formData.append('password', pass);
 
-            const res = await fetch('/login', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('commune_token', data.access_token);
-                window.location.href = '/';
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
+            try {
+                const res = await fetch('/login', { method: 'POST', body: formData });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('commune_token', data.access_token);
+                    window.location.href = '/';
+                } else {
+                    error.style.display = 'block';
+                    btn.innerText = "Đăng nhập hệ thống"; btn.disabled = false;
+                }
+            } catch (err) {
+                alert("Lỗi kết nối máy chủ."); btn.disabled = false;
             }
         };
     </script>

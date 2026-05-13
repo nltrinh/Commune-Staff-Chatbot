@@ -1,0 +1,43 @@
+services:
+  # --- Backend Application ---
+  app:
+    build: .
+    container_name: commune-chatbot-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  # --- MongoDB 8.0 (Replica Set mode for Vector Search) ---
+  db:
+    image: mongodb/mongodb-community-server:8.0-ubuntu2204
+    container_name: commune-chatbot-db
+    ports:
+      - "27017:27017"
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # --- Helper to initiate Replica Set (Runs once) ---
+  db-init:
+    image: mongodb/mongodb-community-server:8.0-ubuntu2204
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: [ "mongosh", "--host", "db", "--eval", "if (!rs.status().ok) rs.initiate()" ]
+
+volumes:
+  mongodb_data:
