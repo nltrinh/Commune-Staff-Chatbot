@@ -13,3 +13,5 @@ langchain-ollama>=1.0
 langchain-community>=0.4
 langchain-mongodb>=0.1
 langchain-text-splitters>=0.3
+docx2txt
+striprtf
