@@ -12,30 +12,30 @@
         :root[data-theme="light"] {
             --bg: #f8fafc;
             --surface: #ffffff;
-            --sidebar-bg: #0f172a;
-            --sidebar-text: rgba(255, 255, 255, 0.7);
-            --border: #e2e8f0;
+            --sidebar-bg: #ffffff;
+            --sidebar-text: #475569;
+            --border: #f1f5f9;
             --text: #1e293b;
             --text-dim: #64748b;
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.1);
-            --user-bubble: #3b82f6;
+            --primary: #f59e0b;
+            --primary-glow: rgba(245, 158, 11, 0.1);
+            --user-bubble: #f59e0b;
             --bot-bubble: #ffffff;
             --glass: rgba(255, 255, 255, 0.8);
         }
 
         :root[data-theme="dark"] {
-            --bg: #020617;
-            --surface: #1e293b;
-            --sidebar-bg: #0f172a;
-            --sidebar-text: rgba(255, 255, 255, 0.6);
-            --border: #334155;
-            --text: #f1f5f9;
-            --text-dim: #94a3b8;
-            --primary: #3b82f6;
-            --user-bubble: #3b82f6;
-            --bot-bubble: #1e293b;
-            --glass: rgba(15, 23, 42, 0.8);
+            --bg: #f1f5f9;
+            --surface: #ffffff;
+            --sidebar-bg: #ffffff;
+            --sidebar-text: #475569;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-dim: #64748b;
+            --primary: #f59e0b;
+            --user-bubble: #d97706;
+            --bot-bubble: #ffffff;
+            --glass: rgba(241, 245, 249, 0.8);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, border 0.3s, color 0.3s; }
@@ -348,13 +348,9 @@
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon" style="background: none; box-shadow: none;">
-                <img src="/static/logo.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
-            </div>
-            <div class="logo-text">
-                <h1>TRỢ LÝ SỐ</h1>
-                <p>Nghiệp vụ Hành chính</p>
+        <div class="sidebar-header" style="justify-content: center; padding: 40px 0;">
+            <div class="logo-icon" style="background: #fff; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15); width: 80px; height: 80px; border-radius: 24px; border: 1px solid #fef3c7;">
+                <img src="/static/logo.png" style="width: 80%; height: 80%; object-fit: contain;">
             </div>
         </div>
 

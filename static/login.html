@@ -7,19 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #10b981;
-            --primary-rgb: 16, 185, 129;
-            --secondary: #064e3b;
-            --accent: #f59e0b;
-            --bg-body: #fbfbfc;
-            --text-main: #0f172a;
+            --primary: #f59e0b;
+            --primary-rgb: 245, 158, 11;
+            --secondary: #78350f;
+            --accent: #ffb800;
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
             --text-dim: #64748b;
             --white: #ffffff;
             --border: #e2e8f0;
-            --radius-lg: 24px;
-            --radius-md: 16px;
+            --radius-lg: 32px;
+            --radius-md: 20px;
             --shadow-sm: 0 10px 40px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 20px 60px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 20px 60px rgba(245, 158, 11, 0.1);
             --total-slides: 3;
             --slide-index: 0;
         }
@@ -32,7 +32,7 @@
         /* --- Left Side: Experience Showcase --- */
         .showcase-section {
             flex: 1.2;
-            background: #020617;
+            background: #f1f5f9; /* Changed to light gray as requested */
             position: relative;
             overflow: hidden;
             display: flex;
@@ -46,7 +46,7 @@
             position: absolute;
             width: 800px;
             height: 800px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0) 70%);
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0) 70%);
             top: -200px;
             left: -200px;
             filter: blur(80px);
@@ -85,18 +85,18 @@
 
         /* Mockup Glass Card */
         .mockup-window {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 40px;
             width: 100%;
             max-width: 480px;
             height: 320px;
             margin-bottom: 50px;
             position: relative;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-            padding: 24px;
+            box-shadow: 0 40px 100px rgba(245, 158, 11, 0.1);
+            padding: 32px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -105,23 +105,23 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
         .window-header { display: flex; gap: 8px; margin-bottom: 10px; }
-        .dot-icon { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+        .dot-icon { width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; }
         .window-content { flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .skeleton-bar { height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; }
+        .skeleton-bar { height: 12px; background: #f1f5f9; border-radius: 6px; }
         .skeleton-bar.header { height: 24px; width: 40%; background: var(--primary); opacity: 0.8; margin-bottom: 10px; }
 
         .slide-text h2 {
             font-family: 'Lexend';
             font-size: 42px;
             font-weight: 800;
-            color: #fff;
+            color: #0f172a;
             margin-bottom: 20px;
             letter-spacing: -1.5px;
             line-height: 1.1;
         }
         .slide-text p {
             font-size: 18px;
-            color: rgba(255,255,255,0.6);
+            color: #64748b;
             max-width: 460px;
             line-height: 1.6;
         }
@@ -135,7 +135,7 @@
             gap: 8px;
             z-index: 20;
         }
-        .page-dot { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.2); transition: 0.4s; cursor: pointer; }
+        .page-dot { width: 8px; height: 8px; border-radius: 4px; background: #cbd5e1; transition: 0.4s; cursor: pointer; }
         .page-dot.active { background: var(--primary); width: 32px; }
 
         /* --- Right Side: Login Section --- */
@@ -145,6 +145,7 @@
             align-items: center;
             justify-content: center;
             padding: 40px;
+            background: #fff;
             z-index: 100;
         }
 
@@ -152,21 +153,95 @@
             width: 100%;
             max-width: 440px;
             animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
+        .brand-logo-container {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
         .brand-logo {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary), #059669);
-            border-radius: 18px;
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 32px;
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
-            color: #fff;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(245, 158, 11, 0.15);
+            border: 1px solid #fef3c7;
         }
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .login-header h1 { font-family: 'Lexend'; font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; color: #0f172a; }
+        .login-header p { color: var(--text-dim); font-size: 16px; margin-bottom: 40px; }
+
+        .form-field { margin-bottom: 24px; text-align: left; }
+        .form-field label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+
+        .input-wrapper { position: relative; }
+        .input-wrapper input {
+            width: 100%;
+            padding: 18px 24px;
+            background: #f8fafc;
+            border: 1.5px solid #f1f5f9;
+            border-radius: 18px;
+            font-size: 15px;
+            color: var(--text-main);
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            display: flex;
+            transition: 0.2s;
+        }
+        .toggle-btn:hover { color: var(--primary); }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+        .submit-btn:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);
+        }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .login-header h1 { font-family: 'Lexend'; font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
         .login-header p { color: var(--text-dim); font-size: 16px; margin-bottom: 40px; }
@@ -340,11 +415,12 @@
             </div>
         </section>
 
-        <!-- Right Login -->
         <section class="login-section">
             <div class="login-card">
-                <div class="brand-logo" style="background: none; box-shadow: none;">
-                    <img src="/static/logo.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 18px;">
+                <div class="brand-logo-container">
+                    <div class="brand-logo">
+                        <img src="/static/logo.png" alt="Logo">
+                    </div>
                 </div>
                 <div class="login-header">
                     <h1>Chào mừng trở lại</h1>
