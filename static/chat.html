@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trợ lý Số Cán bộ Xã — Chính quyền Điện tử</title>
+    <link rel="icon" type="image/png" href="/static/logo/logo-favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
@@ -14,28 +15,38 @@
             --surface: #ffffff;
             --sidebar-bg: #ffffff;
             --sidebar-text: #475569;
-            --border: #f1f5f9;
+            --sidebar-active: #f1f5f9;
+            --sidebar-hover: #f8fafc;
+            --sidebar-border: #e2e8f0;
+            --logo-url: url('/static/logo/logo-dark-transparent.png');
+            --logo-collapsed-url: url('/static/logo/logo-favicon.png');
+            --border: #e2e8f0;
             --text: #1e293b;
             --text-dim: #64748b;
-            --primary: #f59e0b;
-            --primary-glow: rgba(245, 158, 11, 0.1);
-            --user-bubble: #f59e0b;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.1);
+            --user-bubble: #3b82f6;
             --bot-bubble: #ffffff;
             --glass: rgba(255, 255, 255, 0.8);
         }
 
         :root[data-theme="dark"] {
-            --bg: #f1f5f9;
-            --surface: #ffffff;
-            --sidebar-bg: #ffffff;
-            --sidebar-text: #475569;
-            --border: #e2e8f0;
-            --text: #1e293b;
-            --text-dim: #64748b;
-            --primary: #f59e0b;
-            --user-bubble: #d97706;
-            --bot-bubble: #ffffff;
-            --glass: rgba(241, 245, 249, 0.8);
+            --bg: #121417;
+            --surface: #1e2124;
+            --sidebar-bg: #1a1c1e;
+            --sidebar-text: rgba(255, 255, 255, 0.7);
+            --sidebar-active: rgba(255,255,255,0.1);
+            --sidebar-hover: rgba(255,255,255,0.05);
+            --sidebar-border: #2a2d32;
+            --logo-url: url('/static/logo/logo-light-transparent.png');
+            --logo-collapsed-url: url('/static/logo/logo-favicon.png');
+            --border: #2a2d32;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --primary: #3b82f6;
+            --user-bubble: #3b82f6;
+            --bot-bubble: #1e2124;
+            --glass: rgba(26, 28, 30, 0.8);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, border 0.3s, color 0.3s; }
@@ -53,34 +64,48 @@
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
-            color: white;
+            color: var(--sidebar-text);
             display: flex;
             flex-direction: column;
             z-index: 100;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            border-right: 1px solid var(--sidebar-border);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.02);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
         }
+        .sidebar.collapsed { width: 80px; }
 
         .sidebar-header {
-            padding: 40px 24px;
+            padding: 30px 24px;
             display: flex;
             align-items: center;
             gap: 12px;
+            transition: 0.3s;
         }
+        .sidebar.collapsed .sidebar-header { padding: 30px 0; justify-content: center; }
 
-        .logo-icon {
-            width: 40px; height: 40px; background: var(--primary);
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
         }
-
-        .logo-text h1 {
-            font-family: 'Lexend', sans-serif;
-            font-size: 18px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: -0.5px;
+        .main-logo {
+            width: 220px;
+            height: 60px;
+            background: var(--logo-url) no-repeat center;
+            background-size: contain;
+            display: block;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .logo-text p { font-size: 11px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+        .sidebar.collapsed .sidebar-header { padding: 30px 0; justify-content: center; }
+        .sidebar.collapsed .logo-container { align-items: center; }
+        .sidebar.collapsed .main-logo {
+            width: 44px;
+            height: 44px;
+            background-image: var(--logo-collapsed-url);
+            margin: 0 auto;
+        }
 
         .nav-section {
             flex: 1;
@@ -93,60 +118,69 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: rgba(255,255,255,0.3);
+            color: var(--text-dim);
+            opacity: 0.5;
             margin: 32px 0 12px 12px;
+            transition: 0.3s;
         }
+        .sidebar.collapsed .nav-label { display: none; }
 
         .new-chat-btn {
             margin: 0 16px 24px;
             padding: 14px;
             background: var(--primary);
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 14px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-            transition: 0.3s;
+            transition: 0.2s;
+            overflow: hidden;
+            white-space: nowrap;
         }
+        .sidebar.collapsed .new-chat-btn { margin: 0 auto 24px; width: 44px; height: 44px; padding: 0; border-radius: 50%; }
+        .sidebar.collapsed .new-chat-btn span { display: none; }
         .new-chat-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
 
         .history-item {
-            padding: 12px 16px;
+            padding: 12px 14px;
+            margin: 2px 0;
             border-radius: 12px;
-            font-size: 13.5px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: 12px;
-            margin-bottom: 4px;
+            transition: 0.2s;
             color: var(--sidebar-text);
+            font-size: 14px;
             position: relative;
         }
-        .history-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .history-item.active { background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; }
+        .sidebar.collapsed .history-item { justify-content: center; padding: 12px 0; }
+        .sidebar.collapsed .history-item span { display: none; }
+        .sidebar.collapsed .delete-session-btn { display: none; }
+        .history-item:hover { background: var(--sidebar-hover); color: var(--text); }
+        .history-item.active { background: var(--sidebar-active); color: var(--primary); font-weight: 600; }
 
         .delete-session-btn {
             opacity: 0;
             width: 28px;
             height: 28px;
             border-radius: 8px;
-            color: #fff;
+            color: var(--text-dim);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: 0.2s;
             cursor: pointer;
             flex-shrink: 0;
-            background: rgba(255,255,255,0.1);
+            background: var(--sidebar-hover);
         }
         .history-item:hover .delete-session-btn { opacity: 1; }
-        .delete-session-btn:hover { background: var(--primary); }
+        .delete-session-btn:hover { background: var(--primary); color: #fff; }
 
         /* Dropdown Menu */
         .session-menu {
@@ -187,16 +221,18 @@
 
         .sidebar-footer {
             padding: 24px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid var(--sidebar-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .theme-toggle {
-            width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.05);
+            width: 36px; height: 36px; border-radius: 10px; background: var(--sidebar-hover);
             display: flex; align-items: center; justify-content: center; cursor: pointer;
+            color: var(--text-dim);
         }
+        .theme-toggle:hover { color: var(--primary); background: var(--sidebar-active); }
 
         /* ── Main Chat ── */
         .chat-main {
@@ -348,16 +384,15 @@
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-header" style="flex-direction: column; align-items: center; padding: 50px 0; gap: 15px;">
-            <div class="logo-icon" style="background: #fff; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15); width: 100px; height: 100px; border-radius: 28px; border: 1px solid #fef3c7; display: flex; align-items: center; justify-content: center; padding: 10px;">
-                <img src="/static/logo.png" style="width: 100%; height: 100%; object-fit: contain;">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="main-logo"></div>
             </div>
-            <div style="font-family: 'Lexend'; font-size: 22px; font-weight: 900; color: #f59e0b; text-transform: uppercase; letter-spacing: -1px;">TRỢ LÝ SỐ</div>
         </div>
 
         <button class="new-chat-btn" onclick="createNewSession()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"></path></svg>
-            Hội thoại mới
+            <span>Hội thoại mới</span>
         </button>
 
         <nav class="nav-section">
@@ -375,9 +410,14 @@
 
     <main class="chat-main">
         <header class="header">
-            <div class="header-info">
-                <span class="dept-tag" id="user-dept">...</span>
-                <h2 style="font-size: 16px; font-weight: 700; letter-spacing: -0.3px;" id="user-fullname">Hệ thống Trợ lý</h2>
+            <div style="display:flex; align-items:center; gap: 15px;">
+                <button onclick="toggleSidebar()" style="background:transparent; border:none; color:var(--text); cursor:pointer; padding: 8px; display:flex; align-items:center; border-radius: 8px; transition: 0.2s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)';" onmouseout="this.style.background='transparent';">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div class="header-info">
+                    <span class="dept-tag" id="user-dept">...</span>
+                    <h2 style="font-size: 16px; font-weight: 700; letter-spacing: -0.3px;" id="user-fullname">Hệ thống Trợ lý</h2>
+                </div>
             </div>
             <div class="header-actions">
                 <button class="action-btn" onclick="openPasswordModal()">
@@ -623,6 +663,12 @@
         return row;
     }
 
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
+    }
+
     async function sendMessage() {
         const input = document.getElementById('user-input');
         const text = input.value.trim();
@@ -668,6 +714,9 @@
     updateThemeIcon();
     
     window.onload = async () => {
+        const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+        if (isCollapsed) document.querySelector('.sidebar').classList.add('collapsed');
+
         await checkAuth();
         loadSessions();
         loadCurrentChat();
