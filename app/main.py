@@ -143,12 +143,7 @@ async def chat_endpoint(req: ChatRequest, current_user: User = Depends(get_curre
     history = history_service.get_history(session_id)
     
     # Logic for search scope
-    user_db = get_users_col().find_one({"username": current_user.username}) if current_user.username != settings.ADMIN_USERNAME else {}
-    is_unrestricted = False
-    if current_user.username == settings.ADMIN_USERNAME:
-        is_unrestricted = True
-    elif user_db and user_db.get("restrict_chatbot_dept") == False:
-        is_unrestricted = True
+    is_unrestricted = current_user.username == settings.ADMIN_USERNAME
 
     if is_unrestricted:
         search_depts = ["tat_ca"]
@@ -172,12 +167,7 @@ async def chat_stream_endpoint(req: ChatRequest, current_user: User = Depends(ge
     history = history_service.get_history(session_id)
     
     # Logic for search scope
-    user_db = get_users_col().find_one({"username": current_user.username}) if current_user.username != settings.ADMIN_USERNAME else {}
-    is_unrestricted = False
-    if current_user.username == settings.ADMIN_USERNAME:
-        is_unrestricted = True
-    elif user_db and user_db.get("restrict_chatbot_dept") == False:
-        is_unrestricted = True
+    is_unrestricted = current_user.username == settings.ADMIN_USERNAME
 
     if is_unrestricted:
         search_depts = ["tat_ca"] # RAGService treats ["tat_ca"] as "all"
@@ -400,13 +390,7 @@ async def reindex_file(file_id: str, background_tasks: BackgroundTasks, current_
 
 @app.get("/admin/files")
 async def list_files(current_user: User = Depends(get_current_user)):
-    user_db = get_users_col().find_one({"username": current_user.username}) if current_user.username != settings.ADMIN_USERNAME else {}
-    
-    is_unrestricted = False
-    if current_user.username == settings.ADMIN_USERNAME:
-        is_unrestricted = True
-    elif user_db and user_db.get("restrict_chatbot_dept") == False:
-        is_unrestricted = True
+    is_unrestricted = current_user.username == settings.ADMIN_USERNAME
     
     if is_unrestricted:
         return {"files": doc_service.get_all_files()}
@@ -450,14 +434,20 @@ async def read_login(): return FileResponse("static/login.html")
 
 @app.on_event("startup")
 async def startup_event():
-    # Bootstrap departments
+    # Bootstrap departments — use upsert to avoid duplicate inserts
+    # when running with multiple workers (e.g., --workers 4)
     depts_col = get_depts_col()
-    if depts_col.count_documents({}) == 0:
-        depts_col.insert_many([
-            {"code": "tu_phap", "name": "Phòng Tư pháp", "created_at": datetime.now(timezone.utc)},
-            {"code": "dia_chinh", "name": "Phòng Địa chính", "created_at": datetime.now(timezone.utc)},
-            {"code": "cong_an", "name": "Công an Xã", "created_at": datetime.now(timezone.utc)},
-        ])
+    default_depts = [
+        {"code": "tu_phap", "name": "Phòng Tư pháp"},
+        {"code": "dia_chinh", "name": "Phòng Địa chính"},
+        {"code": "cong_an", "name": "Công an Xã"},
+    ]
+    for dept in default_depts:
+        depts_col.update_one(
+            {"code": dept["code"]},
+            {"$setOnInsert": {"code": dept["code"], "name": dept["name"], "created_at": datetime.now(timezone.utc)}},
+            upsert=True
+        )
     logger.info("[STARTUP] Production Architecture Ready")
 
 # --- Serve UI ---

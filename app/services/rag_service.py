@@ -74,7 +74,7 @@ class RAGService:
         query_vector = self.ai.embed_query(query)
         
         # Normalize search departments
-        if "tat_ca" in department:
+        if len(department) == 1 and "tat_ca" in department:
             search_filter = {} # Admin/Unrestricted see everything
         else:
             # Restricted: must match user's dept OR be shared
